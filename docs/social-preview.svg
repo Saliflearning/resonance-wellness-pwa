@@ -12,7 +12,7 @@
   <text x="88" y="324" fill="#c8d3df" font-family="Inter,Arial,sans-serif" font-size="29">Browser-native wellness PWA with explicit trust boundaries</text>
   <g font-family="Inter,Arial,sans-serif" font-size="21">
     <rect x="86" y="386" width="208" height="54" rx="27" fill="#172940" stroke="#5bc6e8"/><text x="190" y="420" text-anchor="middle" fill="#bcefff">Web Audio + PWA</text>
-    <rect x="312" y="386" width="200" height="54" rx="27" fill="#262344" stroke="#a88cff"/><text x="412" y="420" text-anchor="middle" fill="#d9ceff">Firebase sync</text>
+    <rect x="312" y="386" width="200" height="54" rx="27" fill="#262344" stroke="#a88cff"/><text x="412" y="420" text-anchor="middle" fill="#d9ceff">Firebase-ready</text>
     <rect x="530" y="386" width="214" height="54" rx="27" fill="#17322f" stroke="#59d4ad"/><text x="637" y="420" text-anchor="middle" fill="#b8f5df">Playwright + CI</text>
   </g>
   <text x="88" y="526" fill="#91a5ba" font-family="Inter,Arial,sans-serif" font-size="22">Session-only AI key · encoded user data · CodeQL · privacy/history gates</text>

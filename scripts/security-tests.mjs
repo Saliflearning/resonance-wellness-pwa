@@ -19,7 +19,17 @@ const checks = [
   ['AI request timeout', () => assert.match(html, /controller\.abort\(\), 10000/)],
   ['raw auth errors not returned', () => assert.doesNotMatch(html, /error\?\.message \|\| fallback/)],
   ['journal output encoded', () => assert.match(html, /escapeHTML\(e\.note\)/)],
-  ['favorite output encoded', () => assert.match(html, /escapeHTML\(fav\.name\)/)],
+  ['favorite output uses DOM text nodes', () => {
+    assert.match(html, /name\.textContent = fav\.name/);
+    assert.doesNotMatch(html, /el\.innerHTML = filtered\.map/);
+  }],
+  ['account profile is not persisted in browser storage', () => {
+    assert.doesNotMatch(html, /localStorage\.setItem\('res-user'/);
+  }],
+  ['birth inputs are transient and excluded from storage and sync', () => {
+    assert.doesNotMatch(html, /(?:localStorage|sessionStorage)\.(?:getItem|setItem)\('res-birth'/);
+    assert.doesNotMatch(rules, /'birth'/);
+  }],
   ['Firestore ownership required', () => assert.match(rules, /request\.auth\.uid == userId/)],
   ['Firestore fields are type and size bounded', () => {
     assert.match(rules, /function optionalString\(field, maxSize\)/);

@@ -51,9 +51,13 @@ self.addEventListener('fetch', event => {
   if (request.method !== 'GET') return;
 
   // Skip Firebase requests — always need fresh data
-  if (url.hostname.includes('firebase') || 
-      url.hostname.includes('firestore') ||
-      url.hostname.includes('googleapis.com') && url.pathname.includes('firestore')) {
+  const hostname = url.hostname.toLowerCase();
+  const isFirebaseHost = hostname === 'firebaseapp.com'
+    || hostname.endsWith('.firebaseapp.com')
+    || hostname === 'firebaseio.com'
+    || hostname.endsWith('.firebaseio.com');
+  const isFirestoreHost = hostname === 'firestore.googleapis.com';
+  if (isFirebaseHost || isFirestoreHost) {
     return;
   }
 

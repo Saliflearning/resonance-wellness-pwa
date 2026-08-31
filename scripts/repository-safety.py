@@ -140,7 +140,7 @@ def self_test() -> list[str]:
         "legal-name": "Salif Guingani",
         "email": "owner@private.test",
         "phone": "317-555-0123",
-        "google-api-key": "AIzaABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
+        "google-api-key": "AIza" + "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789",
         "aws-access-key": "AKIAABCDEFGHIJKLMNOP",
         "github-token": "ghp_abcdefghijklmnopqrstuvwxyz123456",
         "private-key": "-----BEGIN PRIVATE KEY-----",
@@ -156,7 +156,10 @@ def self_test() -> list[str]:
         failures.append("noreply-email-allowlist")
     if scan_text("noreply@github.com", "fixture.txt", False):
         failures.append("github-merge-email-allowlist")
-    firebase_fixture = "const firebaseConfig = { apiKey: 'AIzaABCDEFGHIJKLMNOPQRSTUVWXYZ123456789' };"
+    firebase_fixture = (
+        "const firebaseConfig = { apiKey: 'AIza"
+        + "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789' };"
+    )
     if scan_text(firebase_fixture, "index.html", False):
         failures.append("firebase-client-config-allowlist")
     if scan_text('<path d="M960 500 1040 360"/>', "fixture.svg", False):

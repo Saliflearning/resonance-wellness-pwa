@@ -33,7 +33,6 @@ service cloud.firestore {
         'accent',
         'lang',
         'sign',
-        'birth',
         'tile-order',
         'boost-cat-order',
         'boost-view',
@@ -114,7 +113,6 @@ service cloud.firestore {
         && optionalString('accent', 20000)
         && optionalString('lang', 20000)
         && optionalString('sign', 20000)
-        && optionalString('birth', 20000)
         && optionalString('tile-order', 20000)
         && optionalString('boost-cat-order', 20000)
         && optionalString('boost-view', 20000)
