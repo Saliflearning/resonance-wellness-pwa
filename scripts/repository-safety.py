@@ -26,7 +26,7 @@ CHECKS = (
     (
         "email",
         re.compile(
-            r"\b[A-Z0-9._%+-]+@(?!(?:users\.noreply\.github\.com|example\.(?:com|org|net))\b)[A-Z0-9.-]+\.[A-Z]{2,}\b",
+            r"\b(?!(?:noreply@github\.com)\b)[A-Z0-9._%+-]+@(?!(?:users\.noreply\.github\.com|example\.(?:com|org|net))\b)[A-Z0-9.-]+\.[A-Z]{2,}\b",
             re.IGNORECASE,
         ),
     ),
@@ -154,6 +154,8 @@ def self_test() -> list[str]:
             failures.append(f"missing-self-test:{expected}")
     if scan_text("bot@users.noreply.github.com", "fixture.txt", False):
         failures.append("noreply-email-allowlist")
+    if scan_text("noreply@github.com", "fixture.txt", False):
+        failures.append("github-merge-email-allowlist")
     firebase_fixture = "const firebaseConfig = { apiKey: 'AIzaABCDEFGHIJKLMNOPQRSTUVWXYZ123456789' };"
     if scan_text(firebase_fixture, "index.html", False):
         failures.append("firebase-client-config-allowlist")
