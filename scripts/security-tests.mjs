@@ -23,6 +23,9 @@ const checks = [
     assert.match(html, /name\.textContent = fav\.name/);
     assert.doesNotMatch(html, /el\.innerHTML = filtered\.map/);
   }],
+  ['generic DOM helper cannot write HTML', () => {
+    assert.doesNotMatch(html, /prop === 'innerHTML'/);
+  }],
   ['account profile is not persisted in browser storage', () => {
     assert.doesNotMatch(html, /localStorage\.setItem\('res-user'/);
   }],
