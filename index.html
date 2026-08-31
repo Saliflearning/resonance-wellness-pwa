@@ -3473,14 +3473,18 @@ window.onunhandledrejection = function(e) {
 // Replaces the localStorage-only auth system
 // ═══════════════════════════════════════════════════════
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA_fXaXIWQxp_xJWcPzlt0pDIGfa-3ocnQ",
-  authDomain: "resonance-226.firebaseapp.com",
-  projectId: "resonance-226",
-  storageBucket: "resonance-226.firebasestorage.app",
-  messagingSenderId: "1096285929368",
-  appId: "1:1096285929368:web:4b8f08f07bda0e218cb5ed"
-};
+function getRuntimeFirebaseConfig() {
+  const source = window.__RESONANCE_FIREBASE_CONFIG__;
+  const fields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+  if (!source || typeof source !== 'object') return null;
+  if (!fields.every(field => typeof source[field] === 'string' && source[field].length <= 256)) return null;
+  return Object.freeze(Object.fromEntries(fields.map(field => [field, source[field]])));
+}
+
+// The public showcase intentionally provides no live Firebase project config.
+// Self-hosted deployments may inject window.__RESONANCE_FIREBASE_CONFIG__
+// before this script after deploying and testing their own Firestore rules.
+const firebaseConfig = getRuntimeFirebaseConfig();
 
 // Initialize Firebase
 let _firebaseApp = null;
@@ -3617,6 +3621,10 @@ async function ensureUserProfile(user) {
 
 function initFirebase() {
   try {
+    if (!firebaseConfig) {
+      firebaseReady = false;
+      return;
+    }
     // Check if Firebase SDK is available
     if (typeof firebase === 'undefined') {
       // SDK not loaded yet — could be slow CDN or offline
@@ -3638,7 +3646,6 @@ function initFirebase() {
     _auth.onAuthStateChanged(user => {
       if (user) {
         currentUser = userFromFirebase(user);
-        localStorage.setItem('res-user', JSON.stringify(currentUser));
         ensureUserProfile(user).catch(e => console.warn('Firestore profile error:', e));
         loadFirestoreData(user.uid);
         updateAccountUI();
@@ -3669,7 +3676,7 @@ function initFirebase() {
 const SYNC_KEYS = [
   'res-prog','res-custom-plan','res-custom-prog','res-streak',
   'res-stats','res-journal','res-favs','res-pinned','res-theme',
-  'res-accent','res-lang','res-sign','res-birth','res-tile-order',
+  'res-accent','res-lang','res-sign','res-tile-order',
   'res-boost-cat-order','res-boost-view','res-reminders',
 ];
 const SYNC_VALUE_LIMITS = {
@@ -3726,7 +3733,6 @@ async function loadFirestoreData(uid) {
           email: normalizeEmail(data.profile.email || currentUser?.email),
           verified: !!data.profile.emailVerified,
         };
-        localStorage.setItem('res-user', JSON.stringify(currentUser));
         updateAccountUI();
       }
       SYNC_KEYS.forEach(key => {
@@ -3786,7 +3792,6 @@ async function submitAuth() {
       }
       // Save any existing local data to Firestore
       currentUser = { uid: cred.user.uid, email, name, verified: !!cred.user.emailVerified };
-      localStorage.setItem('res-user', JSON.stringify(currentUser));
       await ensureUserProfile(cred.user);
       await saveFirestoreData();
       showToast('✦ Welcome, ' + name + '! Check your email to verify your account.');
@@ -3811,7 +3816,6 @@ async function signOut() {
   if (firebaseReady && _auth) {
     try { await _auth.signOut(); } catch(e) {}
   }
-  localStorage.removeItem('res-user');
   currentUser = null;
   updateAccountUI();
   showToast('Signed out. Your data is saved.');
@@ -4979,12 +4983,38 @@ function renderFavStrip(){
     const totalMin = fav.steps ? fav.steps.reduce((a,s)=>a+s.min,0) : (fav.duration || 0);
     const color = fav.color || 'var(--c-gold)';
 
-    card.innerHTML = `
-      <button class="fav-remove" onclick="event.stopPropagation();removeFavorite('${fav.id}')" aria-label="Remove from favorites">✕</button>
-      <span class="fav-card-icon">${escapeHTML(fav.icon)}</span>
-      <div class="fav-card-name" style="color:${color}">${escapeHTML(fav.name)}</div>
-      <div class="fav-card-time">${totalMin} min</div>
-      <button class="fav-card-play" style="color:${color};border-color:${color}30" onclick="playFavorite('${fav.id}')">▶ Play</button>`;
+    const remove = document.createElement('button');
+    remove.className = 'fav-remove';
+    remove.type = 'button';
+    remove.setAttribute('aria-label', 'Remove from favorites');
+    remove.textContent = '✕';
+    remove.addEventListener('click', event => {
+      event.stopPropagation();
+      removeFavorite(fav.id);
+    });
+
+    const icon = document.createElement('span');
+    icon.className = 'fav-card-icon';
+    icon.textContent = fav.icon;
+
+    const name = document.createElement('div');
+    name.className = 'fav-card-name';
+    name.style.color = color;
+    name.textContent = fav.name;
+
+    const time = document.createElement('div');
+    time.className = 'fav-card-time';
+    time.textContent = `${totalMin} min`;
+
+    const play = document.createElement('button');
+    play.className = 'fav-card-play';
+    play.type = 'button';
+    play.style.color = color;
+    play.style.borderColor = color;
+    play.textContent = '▶ Play';
+    play.addEventListener('click', () => playFavorite(fav.id));
+
+    card.append(remove, icon, name, time, play);
 
     scroll.appendChild(card);
   });
@@ -6606,7 +6636,6 @@ function runAstroCalc() {
     renderAstroResults(profile);
     if (btn) { btn.disabled = false; btn.textContent = '✦ Recalculate'; }
     // Save birth data
-    localStorage.setItem('res-birth', JSON.stringify({ date: dateVal, time: document.getElementById('birthTime')?.value, city: boundedText(document.getElementById('birthCity')?.value, 80) }));
     // Scroll to results
     document.getElementById('astroResults')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, 800);
@@ -8028,7 +8057,7 @@ function _applyI18nStrings() {
   _set('planProgressTitle','textContent', t('progress'));
   document.querySelectorAll('.pr-item-label').forEach((el, i) => {
     const keys = ['week1','week2','week3'];
-    if (keys[i]) el.innerHTML = t(keys[i]).replace('\n','<br>');
+    if (keys[i]) el.textContent = t(keys[i]);
   });
   // Sub-tab labels
   const stabPlan = document.getElementById('stab-plan');
@@ -8230,41 +8259,95 @@ function renderFavPage() {
   if (!el) return;
   const all = getFavorites();
   const filtered = currentFavFilter === 'all' ? all : all.filter(f => f.type === currentFavFilter);
+  el.replaceChildren();
 
   if (!filtered.length) {
-    el.innerHTML = `<div class="fav-empty-state">
-      <span class="fav-empty-icon">❤️</span>
-      <div class="fav-empty-title">No favorites yet</div>
-      <div class="fav-empty-sub">Tap "+ Add" to save your favorite frequencies, combos, boosts and plan sessions for instant access.</div>
-    </div>`;
+    const empty = document.createElement('div');
+    empty.className = 'fav-empty-state';
+    const icon = document.createElement('span');
+    icon.className = 'fav-empty-icon';
+    icon.textContent = '❤️';
+    const title = document.createElement('div');
+    title.className = 'fav-empty-title';
+    title.textContent = 'No favorites yet';
+    const subtitle = document.createElement('div');
+    subtitle.className = 'fav-empty-sub';
+    subtitle.textContent = 'Tap "+ Add" to save a frequency, combo, boost, or plan session.';
+    empty.append(icon, title, subtitle);
+    el.appendChild(empty);
     return;
   }
 
-  el.innerHTML = filtered.map(fav => {
+  const fragment = document.createDocumentFragment();
+  filtered.forEach(fav => {
     const color = fav.color || 'var(--gold)';
     const totalMin = fav.steps ? fav.steps.reduce((a,s) => a + (s.min||0), 0) : (fav.duration || 0);
     const typeLabels = { frequency:'Single Hz', combo:'Custom Combo', boost:'Boost', session:'Plan Session' };
     const typeColors = { frequency:'var(--gold)', combo:'var(--teal)', boost:'var(--rose)', session:'var(--vio-lt)' };
     const tc = typeColors[fav.type] || 'var(--gold)';
-    return `<div class="fav-item-card" style="background:${color}0d;border-color:${color}22">
-      <div class="fic-main">
-          <div class="fic-icon" style="border-color:${color}25">${escapeHTML(fav.icon)}</div>
-        <div class="fic-info">
-          <div class="fic-type-badge" style="color:${tc};border-color:${tc}30;background:${tc}10">${typeLabels[fav.type] || fav.type}</div>
-          <div class="fic-name" style="color:${color}">${escapeHTML(fav.name)}</div>
-          ${fav.desc ? `<div class="fic-desc">${escapeHTML(fav.desc)}</div>` : ''}
-        </div>
-        <div style="font-family:'Cinzel',serif;font-size:20px;font-weight:700;color:${color};flex-shrink:0;text-align:right">
-          ${totalMin}<span style="font-size:9px;display:block;color:var(--t3)">min</span>
-        </div>
-      </div>
-      <div class="fic-actions">
-        <button class="fic-play-btn" style="color:${color};border-color:${color}25"
-          onclick="playFavoriteById('${fav.id}')">▶ Play Now</button>
-        <button class="fic-remove-btn" onclick="removeFavoriteById('${fav.id}')">✕</button>
-      </div>
-    </div>`;
-  }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'fav-item-card';
+    card.style.background = fav.bg;
+    card.style.borderColor = fav.border;
+
+    const main = document.createElement('div');
+    main.className = 'fic-main';
+    const icon = document.createElement('div');
+    icon.className = 'fic-icon';
+    icon.style.borderColor = color;
+    icon.textContent = fav.icon;
+
+    const info = document.createElement('div');
+    info.className = 'fic-info';
+    const badge = document.createElement('div');
+    badge.className = 'fic-type-badge';
+    badge.style.color = tc;
+    badge.style.borderColor = tc;
+    badge.textContent = typeLabels[fav.type] || 'Saved item';
+    const name = document.createElement('div');
+    name.className = 'fic-name';
+    name.style.color = color;
+    name.textContent = fav.name;
+    info.append(badge, name);
+    if (fav.desc) {
+      const desc = document.createElement('div');
+      desc.className = 'fic-desc';
+      desc.textContent = fav.desc;
+      info.appendChild(desc);
+    }
+
+    const time = document.createElement('div');
+    time.style.cssText = "font-family:'Cinzel',serif;font-size:20px;font-weight:700;flex-shrink:0;text-align:right";
+    time.style.color = color;
+    time.append(document.createTextNode(String(totalMin)));
+    const unit = document.createElement('span');
+    unit.style.cssText = 'font-size:9px;display:block;color:var(--t3)';
+    unit.textContent = 'min';
+    time.appendChild(unit);
+    main.append(icon, info, time);
+
+    const actions = document.createElement('div');
+    actions.className = 'fic-actions';
+    const play = document.createElement('button');
+    play.className = 'fic-play-btn';
+    play.type = 'button';
+    play.style.color = color;
+    play.style.borderColor = color;
+    play.textContent = '▶ Play Now';
+    play.addEventListener('click', () => playFavoriteById(fav.id));
+    const remove = document.createElement('button');
+    remove.className = 'fic-remove-btn';
+    remove.type = 'button';
+    remove.setAttribute('aria-label', `Remove ${fav.name}`);
+    remove.textContent = '✕';
+    remove.addEventListener('click', () => removeFavoriteById(fav.id));
+    actions.append(play, remove);
+
+    card.append(main, actions);
+    fragment.appendChild(card);
+  });
+  el.appendChild(fragment);
 }
 
 function playFavoriteById(id) {
@@ -10292,27 +10375,57 @@ function renderHomeBoostsStrip() {
 
   if (!quickBoosts.length) { el.style.display = 'none'; return; }
   el.style.display = 'block';
+  el.replaceChildren();
 
-  el.innerHTML = `
-    <div class="home-boosts-strip-header">
-      <div class="home-boosts-strip-title">⚡ Quick Boosts</div>
-      <button class="home-boosts-see-all" onclick="switchPage('practice',document.getElementById('nav-practice'));switchSubTab('boosts')">See all →</button>
-    </div>
-    <div class="quick-boosts-scroll">
-      ${quickBoosts.map(b => {
-        const totalMin = b.steps ? b.steps.reduce((a,s)=>a+s.min,0) : 0;
-        const color = b.color || 'var(--gold)';
-        const border = b.border || 'rgba(212,168,76,.25)';
-        const bg = b.bg || 'rgba(212,168,76,.08)';
-        return `<button class="quick-boost-pill" 
-          style="background:${bg};border-color:${border};--pill-glow:${color}30"
-          onclick="runBoostFromHome('${b.id}')">
-          <span class="qbp-icon">${b.icon || '⚡'}</span>
-          <span class="qbp-name" style="color:${color}">${b.name}</span>
-          <span class="qbp-time">${totalMin}m</span>
-        </button>`;
-      }).join('')}
-    </div>`;
+  const header = document.createElement('div');
+  header.className = 'home-boosts-strip-header';
+  const title = document.createElement('div');
+  title.className = 'home-boosts-strip-title';
+  title.textContent = '⚡ Quick Boosts';
+  const seeAll = document.createElement('button');
+  seeAll.className = 'home-boosts-see-all';
+  seeAll.type = 'button';
+  seeAll.textContent = 'See all →';
+  seeAll.addEventListener('click', () => {
+    switchPage('practice', document.getElementById('nav-practice'));
+    switchSubTab('boosts');
+  });
+  header.append(title, seeAll);
+
+  const scroller = document.createElement('div');
+  scroller.className = 'quick-boosts-scroll';
+  quickBoosts.forEach(boost => {
+    const id = safeIdentifier(boost.id);
+    if (!id) return;
+    const totalMin = Array.isArray(boost.steps)
+      ? boost.steps.slice(0, 21).reduce((sum, step) => sum + clampInt(step?.min, 0, 180, 0), 0)
+      : 0;
+    const color = safeStyleColor(boost.color, 'var(--gold)');
+    const border = safeStyleColor(boost.border, 'rgba(212,168,76,.25)');
+    const bg = safeStyleColor(boost.bg, 'rgba(212,168,76,.08)');
+
+    const button = document.createElement('button');
+    button.className = 'quick-boost-pill';
+    button.type = 'button';
+    button.style.background = bg;
+    button.style.borderColor = border;
+    button.style.setProperty('--pill-glow', color);
+    button.addEventListener('click', () => runBoostFromHome(id));
+
+    const icon = document.createElement('span');
+    icon.className = 'qbp-icon';
+    icon.textContent = boundedText(boost.icon, 8, '⚡');
+    const name = document.createElement('span');
+    name.className = 'qbp-name';
+    name.style.color = color;
+    name.textContent = boundedText(boost.name, 80, 'Listening routine');
+    const time = document.createElement('span');
+    time.className = 'qbp-time';
+    time.textContent = `${totalMin}m`;
+    button.append(icon, name, time);
+    scroller.appendChild(button);
+  });
+  el.append(header, scroller);
 }
 
 function runBoostFromHome(boostId) {
@@ -10674,12 +10787,8 @@ let authMode = 'signup'; // 'signup' | 'login'
 
 // ── AUTH INIT ────────────────────────────────────────────
 function initAuth() {
-  // Update account UI with cached user immediately (offline-first)
-  const savedUser = localStorage.getItem('res-user');
   const guestMode = localStorage.getItem('res-guest');
-  if (savedUser) {
-    try { currentUser = JSON.parse(savedUser); updateAccountUI(); } catch(e) {}
-  } else if (!guestMode) {
+  if (!guestMode) {
     // Show auth overlay for first-time users (after a short delay so home renders first)
     setTimeout(() => {
       const overlay = document.getElementById('authOverlay');
@@ -11686,18 +11795,6 @@ setTimeout(() => {
   };
   startTimer = startTimerWithBar;
 }, 350);
-// Restore saved birth data
-const savedBirth = safeJSONParse(localStorage.getItem('res-birth') || 'null', null);
-if (savedBirth) {
-  setTimeout(() => {
-    const bd = document.getElementById('birthDate');
-    const bt = document.getElementById('birthTime');
-    const bc = document.getElementById('birthCity');
-    if (bd && savedBirth.date) bd.value = savedBirth.date;
-    if (bt && savedBirth.time) bt.value = savedBirth.time;
-    if (bc && savedBirth.city) bc.value = savedBirth.city;
-  }, 400);
-}
 // View toggle init - deferred to phase 2
 setBoostsView(currentBoostsView);
 // ── RENDER FREQ REFERENCE (About page) ──

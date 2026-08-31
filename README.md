@@ -17,7 +17,7 @@ verification.
 |---|---|
 | Offline-first UX | Installable manifest, service-worker app-shell cache, guest-mode local storage |
 | Browser APIs | Web Audio playback, optional speech controls, notifications, responsive PWA shell |
-| Account data | Firebase Authentication plus owner-scoped `users/{uid}` Firestore documents |
+| Account data | Firebase-ready authentication and owner-scoped `users/{uid}` Firestore sync |
 | AI fallback | Optional Gemini suggestion flow with session-only key handling and deterministic offline recommendations |
 | Internationalization | English, Spanish, French, Arabic/RTL, Portuguese, and Chinese UI dictionaries |
 | Quality | Content assertions, security invariants, Playwright feature smoke tests, four-viewport stress checks |
@@ -76,10 +76,11 @@ npm run test:smoke
 npm run test:stress
 ```
 
-The browser scripts start a loopback-only static server automatically. Firebase
-account flows require the checked-in public Firebase client configuration and
-an authorized deployment domain. Core guest-mode functionality does not require
-an account or AI key.
+The browser scripts start a loopback-only static server automatically. The
+public showcase runs in guest mode and does not include a live Firebase project
+configuration. A self-hosted account flow requires runtime-injected Firebase
+client configuration, an authorized domain, and separately deployed and tested
+Firestore rules. Core functionality does not require an account or AI key.
 
 ## Verification matrix
 
@@ -100,7 +101,8 @@ security coverage.
 
 ## Privacy and safety
 
-- Journal entries, birth inputs, reminders, and preferences can be sensitive.
+- Journal entries, reminders, preferences, and birth inputs can be sensitive;
+  birth inputs are not stored or synced.
 - Guest data stays in browser storage unless the user signs in and syncs.
 - Firebase rules restrict each account to its own allowlisted user document.
 - Gemini keys are never synced to Firestore and last only for the current tab.

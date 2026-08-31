@@ -2,12 +2,16 @@
 
 Resonance uses Firebase Authentication for accounts and a Firestore document at `users/{uid}` for synced app data.
 
+The public showcase intentionally omits a live Firebase client configuration.
+Account mode is enabled only for a self-hosted deployment that injects
+`window.__RESONANCE_FIREBASE_CONFIG__` before the app script and has already
+validated and deployed its own Firestore rules.
+
 ## Firebase Console Checklist
 
 1. Authentication -> Sign-in method: enable Email/Password.
 2. Authentication -> Settings -> Authorized domains: add every production domain:
-   - `resonance-777.vercel.app`
-   - any Netlify domain you still use
+   - `resonance-wellness-pwa.vercel.app`
    - any future custom domain
 3. Firestore Database -> Rules: publish `firestore.rules` from this repo.
 4. Firestore Database -> Data: user documents should live only under `users/{uid}`.
@@ -30,6 +34,10 @@ The app stores a `profile` object plus synced local app keys:
 ## Safety Rules
 
 - Never store passwords, Firebase tokens, or Gemini API keys in Firestore.
+- Do not persist the cached account profile in browser storage; Firebase Auth
+  restores the authenticated session and the profile remains in memory.
+- Birth date, time, and city inputs are transient form values and must never be
+  stored or synced.
 - Keep optional Gemini keys local to the browser.
 - Do not create shared/global user documents unless a separate rules review is done first.
 - Any new collection should default to denied until a rule and test are added.

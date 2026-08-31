@@ -13,7 +13,8 @@ The app may store:
 
 - Theme, accent, language, output, and volume preferences.
 - Session progress, streak, stats, favorites, reminders, journal entries, and custom plans.
-- Selected zodiac sign and optional birth/location inputs used for insight features.
+- Selected zodiac sign. Optional birth date, time, and city inputs are transient
+  form values; they are not stored or synced.
 - The Gemini key is not part of durable local data and is never synced.
 
 ## Safety Boundaries
@@ -32,3 +33,4 @@ Resonance is a wellness and mindfulness app. It should never present frequency s
 7. Escape user-controlled content before rendering with `innerHTML`.
 8. Keep deployment security headers active in `vercel.json`.
 9. Do not allow client-side Firestore deletes for account documents unless a dedicated recovery/export flow exists.
+10. Do not persist account-profile or birth/location data in durable browser storage.

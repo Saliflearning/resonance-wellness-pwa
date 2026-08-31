@@ -21,6 +21,10 @@ showcase.
 - Firebase writes remain owner-scoped, field-allowlisted, type-checked, and
   size-bounded; rule deployment is intentionally handled separately from this
   static-site release.
+- The public deployment omits live Firebase project configuration and defaults
+  to guest mode; self-hosted account sync requires separately tested rules.
+- Account profile and birth/location inputs are not persisted in browser
+  storage, and user-controlled favorites render through DOM text nodes.
 
 ## Canonical locations
 

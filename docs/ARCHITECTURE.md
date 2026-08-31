@@ -9,8 +9,8 @@ behavior. No bundler or server runtime is required.
 
 ## Data boundaries
 
-1. Guest mode writes preferences, progress, plans, journal entries, reminders,
-   and optional birth inputs to browser `localStorage`.
+1. Guest mode writes preferences, progress, plans, journal entries, and
+   reminders to browser `localStorage`. Optional birth inputs are not persisted.
 2. Account mode uses Firebase Authentication. Allowlisted local values are size
    bounded before being copied to the authenticated user's `users/{uid}`
    Firestore document.
@@ -20,12 +20,15 @@ behavior. No bundler or server runtime is required.
 4. User-authored and model-returned text is bounded and encoded before entering
    HTML templates. Structured frequency and duration values are allowlisted and
    clamped.
+5. Firebase restores account identity; the app does not duplicate the account
+   profile in durable browser storage.
 
 ## Trust model
 
 - The browser and static assets are public.
-- Firebase browser configuration is a public client identifier, not an admin
-  secret. Firestore rules and authenticated ownership are the authorization
+- The public showcase omits live Firebase project configuration and runs in
+  guest mode. Self-hosted deployments may inject Firebase browser identifiers,
+  but Firestore rules and authenticated ownership remain the authorization
   boundary.
 - Browser storage is user-controlled and may be malformed or malicious; parsing
   uses safe fallbacks and rendering treats values as untrusted.

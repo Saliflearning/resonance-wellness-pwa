@@ -95,7 +95,6 @@ async function run() {
         color: 'red;position:fixed',
         steps: [{ hz: 528, min: 10 }],
       }]));
-      localStorage.setItem('res-birth', '{malformed');
     });
     await page.reload({ waitUntil: 'load' });
 
