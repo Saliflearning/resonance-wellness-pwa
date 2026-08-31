@@ -3930,7 +3930,6 @@ function _set(id, prop, val) {
   const el = document.getElementById(id);
   if (!el) return;
   if (prop === 'textContent') el.textContent = val;
-  else if (prop === 'innerHTML') el.innerHTML = val;
   else if (prop === 'display') el.style.display = val;
   else if (prop === 'value') el.value = val;
 }
