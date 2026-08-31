@@ -1,0 +1,148 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsUserDoc(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    function profileMatchesUser() {
+      return !('profile' in request.resource.data)
+        || request.resource.data.profile.uid == request.auth.uid;
+    }
+
+    function allowedUserFields() {
+      return request.resource.data.keys().hasOnly([
+        'profile',
+        'schemaVersion',
+        'updatedAt',
+        'lastSynced',
+        'prog',
+        'custom-plan',
+        'custom-prog',
+        'streak',
+        'stats',
+        'journal',
+        'favs',
+        'pinned',
+        'theme',
+        'accent',
+        'lang',
+        'sign',
+        'birth',
+        'tile-order',
+        'boost-cat-order',
+        'boost-view',
+        'reminders'
+      ]);
+    }
+
+    function validProfile() {
+      return !('profile' in request.resource.data)
+        || (
+          request.resource.data.profile.keys().hasOnly([
+            'uid',
+            'email',
+            'displayName',
+            'emailVerified',
+            'providerIds',
+            'createdAt',
+            'lastLoginAt',
+            'schemaVersion'
+          ])
+          && request.resource.data.profile.uid == request.auth.uid
+          && request.resource.data.profile.email is string
+          && request.resource.data.profile.email.size() <= 254
+          && request.resource.data.profile.displayName is string
+          && request.resource.data.profile.displayName.size() <= 60
+          && (
+            !('emailVerified' in request.resource.data.profile)
+            || request.resource.data.profile.emailVerified is bool
+          )
+          && (
+            !('providerIds' in request.resource.data.profile)
+            || (
+              request.resource.data.profile.providerIds is list
+              && request.resource.data.profile.providerIds.size() <= 10
+            )
+          )
+          && (
+            !('createdAt' in request.resource.data.profile)
+            || request.resource.data.profile.createdAt == null
+            || (
+              request.resource.data.profile.createdAt is string
+              && request.resource.data.profile.createdAt.size() <= 40
+            )
+          )
+          && (
+            !('lastLoginAt' in request.resource.data.profile)
+            || request.resource.data.profile.lastLoginAt == null
+            || (
+              request.resource.data.profile.lastLoginAt is string
+              && request.resource.data.profile.lastLoginAt.size() <= 40
+            )
+          )
+          && (
+            !('schemaVersion' in request.resource.data.profile)
+            || request.resource.data.profile.schemaVersion is int
+          )
+        );
+    }
+
+    function optionalString(field, maxSize) {
+      return !(field in request.resource.data)
+        || (
+          request.resource.data[field] is string
+          && request.resource.data[field].size() <= maxSize
+        );
+    }
+
+    function validStoredFields() {
+      return optionalString('prog', 20000)
+        && optionalString('custom-plan', 60000)
+        && optionalString('custom-prog', 30000)
+        && optionalString('streak', 20000)
+        && optionalString('stats', 20000)
+        && optionalString('journal', 120000)
+        && optionalString('favs', 20000)
+        && optionalString('pinned', 20000)
+        && optionalString('theme', 20000)
+        && optionalString('accent', 20000)
+        && optionalString('lang', 20000)
+        && optionalString('sign', 20000)
+        && optionalString('birth', 20000)
+        && optionalString('tile-order', 20000)
+        && optionalString('boost-cat-order', 20000)
+        && optionalString('boost-view', 20000)
+        && optionalString('reminders', 30000)
+        && (
+          !('schemaVersion' in request.resource.data)
+          || request.resource.data.schemaVersion is int
+        )
+        && optionalString('updatedAt', 40)
+        && optionalString('lastSynced', 40);
+    }
+
+    function validUserDoc() {
+      return request.resource.data.keys().size() <= 25
+        && allowedUserFields()
+        && profileMatchesUser()
+        && validProfile()
+        && validStoredFields();
+    }
+
+    match /users/{userId} {
+      allow read: if ownsUserDoc(userId);
+      allow create, update: if ownsUserDoc(userId) && validUserDoc();
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

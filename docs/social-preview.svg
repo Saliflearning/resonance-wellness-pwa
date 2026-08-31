@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <defs>
+    <radialGradient id="glow" cx="68%" cy="28%" r="72%"><stop stop-color="#31296a"/><stop offset=".55" stop-color="#111a31"/><stop offset="1" stop-color="#050a12"/></radialGradient>
+    <linearGradient id="line" x1="0" x2="1"><stop stop-color="#d9aa4c"/><stop offset="1" stop-color="#57d6b1"/></linearGradient>
+  </defs>
+  <rect width="1280" height="640" fill="url(#glow)"/>
+  <circle cx="1010" cy="170" r="168" fill="none" stroke="#d8b45f" stroke-opacity=".15" stroke-width="2"/>
+  <circle cx="1010" cy="170" r="112" fill="none" stroke="#66ddbd" stroke-opacity=".2" stroke-width="2"/>
+  <path d="M820 410 C900 300 960 500 1040 360 S1180 260 1240 350" fill="none" stroke="url(#line)" stroke-width="5" stroke-linecap="round" opacity=".8"/>
+  <text x="86" y="148" fill="#7ce0c3" font-family="Inter,Arial,sans-serif" font-size="23" letter-spacing="4">OFFLINE-FIRST · MULTILINGUAL · TESTED</text>
+  <text x="82" y="265" fill="#f8e8b8" font-family="Georgia,serif" font-size="92" font-weight="700">Resonance</text>
+  <text x="88" y="324" fill="#c8d3df" font-family="Inter,Arial,sans-serif" font-size="29">Browser-native wellness PWA with explicit trust boundaries</text>
+  <g font-family="Inter,Arial,sans-serif" font-size="21">
+    <rect x="86" y="386" width="208" height="54" rx="27" fill="#172940" stroke="#5bc6e8"/><text x="190" y="420" text-anchor="middle" fill="#bcefff">Web Audio + PWA</text>
+    <rect x="312" y="386" width="200" height="54" rx="27" fill="#262344" stroke="#a88cff"/><text x="412" y="420" text-anchor="middle" fill="#d9ceff">Firebase sync</text>
+    <rect x="530" y="386" width="214" height="54" rx="27" fill="#17322f" stroke="#59d4ad"/><text x="637" y="420" text-anchor="middle" fill="#b8f5df">Playwright + CI</text>
+  </g>
+  <text x="88" y="526" fill="#91a5ba" font-family="Inter,Arial,sans-serif" font-size="22">Session-only AI key · encoded user data · CodeQL · privacy/history gates</text>
+  <rect x="86" y="565" width="630" height="4" rx="2" fill="url(#line)"/>
+</svg>

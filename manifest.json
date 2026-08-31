@@ -1,0 +1,44 @@
+{
+  "name": "Resonance - Listening & Reflection",
+  "short_name": "Resonance",
+  "description": "Sound-based wellness routines, reflective insights, lunar calendar, and personal tracking tools.",
+  "start_url": "/",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#03050b",
+  "theme_color": "#03050b",
+  "lang": "en",
+  "categories": ["health", "lifestyle", "music"],
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Quick Boost",
+      "short_name": "Boost",
+      "description": "Jump to Quick Boosts",
+      "url": "/?shortcut=boosts",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "My Plan",
+      "short_name": "Plan",
+      "description": "Start today's session",
+      "url": "/?shortcut=plan",
+      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+# Local Netlify folder
+.netlify
+
+.vercel
+
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+.agents/
+.claude/
+.codex/
+.specify/
+specs/
+AGENTS.md
+CLAUDE.md
+
+graphify-out/
+
+node_modules/
+stress-report.json

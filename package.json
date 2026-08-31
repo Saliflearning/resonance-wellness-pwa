@@ -1,0 +1,29 @@
+{
+  "name": "resonance-pwa",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Static wellness PWA verification and smoke-test harness for Resonance.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=24"
+  },
+  "keywords": [
+    "pwa",
+    "offline-first",
+    "web-audio",
+    "firebase",
+    "playwright",
+    "accessibility"
+  ],
+  "scripts": {
+    "validate:content": "node scripts/validate-content.mjs",
+    "test:security": "node scripts/security-tests.mjs",
+    "test:smoke": "node scripts/feature-smoke.mjs",
+    "test:stress": "node scripts/stress-test.mjs",
+    "capture:assets": "node scripts/capture-portfolio-assets.mjs",
+    "test": "npm run validate:content && npm run test:security"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

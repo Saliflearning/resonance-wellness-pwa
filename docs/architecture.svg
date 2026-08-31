@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title desc">
+  <title id="title">Resonance architecture</title>
+  <desc id="desc">Browser PWA connected to local storage, Firebase, Gemini, and delivery verification.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#07111f"/><stop offset="1" stop-color="#10172b"/></linearGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-opacity=".28"/></filter>
+  </defs>
+  <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
+  <text x="70" y="78" fill="#f3e7bd" font-family="Inter,Arial,sans-serif" font-size="34" font-weight="700">Resonance · Offline-first PWA</text>
+  <text x="70" y="112" fill="#96a7bd" font-family="Inter,Arial,sans-serif" font-size="18">Explicit trust boundaries for local data, account sync, optional AI, and delivery evidence</text>
+  <g filter="url(#shadow)" font-family="Inter,Arial,sans-serif">
+    <rect x="420" y="180" width="360" height="230" rx="24" fill="#17243a" stroke="#e6bd62" stroke-width="2"/>
+    <text x="600" y="230" text-anchor="middle" fill="#f5d985" font-size="26" font-weight="700">Browser PWA</text>
+    <text x="600" y="268" text-anchor="middle" fill="#dce6f1" font-size="18">UI · Web Audio · i18n · routines</text>
+    <text x="600" y="300" text-anchor="middle" fill="#dce6f1" font-size="18">bounded parsing · encoded output</text>
+    <text x="600" y="332" text-anchor="middle" fill="#dce6f1" font-size="18">service worker · manifest</text>
+    <rect x="488" y="354" width="224" height="34" rx="17" fill="#0d1727"/>
+    <text x="600" y="377" text-anchor="middle" fill="#7ce0c3" font-size="15">static hosting · no build step</text>
+    <rect x="70" y="200" width="270" height="150" rx="22" fill="#14283a" stroke="#5bc6e8"/>
+    <text x="205" y="245" text-anchor="middle" fill="#8fe2fa" font-size="22" font-weight="700">Guest storage</text>
+    <text x="205" y="282" text-anchor="middle" fill="#dce6f1" font-size="16">preferences · journal · plans</text>
+    <text x="205" y="312" text-anchor="middle" fill="#9fb1c5" font-size="15">local browser boundary</text>
+    <rect x="860" y="150" width="270" height="170" rx="22" fill="#1d233d" stroke="#a88cff"/>
+    <text x="995" y="198" text-anchor="middle" fill="#c6b5ff" font-size="22" font-weight="700">Firebase</text>
+    <text x="995" y="235" text-anchor="middle" fill="#dce6f1" font-size="16">Authentication · Firestore</text>
+    <text x="995" y="265" text-anchor="middle" fill="#9fb1c5" font-size="15">owner-scoped users/{uid}</text>
+    <text x="995" y="292" text-anchor="middle" fill="#9fb1c5" font-size="15">allowlisted bounded sync</text>
+    <rect x="860" y="370" width="270" height="160" rx="22" fill="#202639" stroke="#f0a65a"/>
+    <text x="995" y="417" text-anchor="middle" fill="#ffc27a" font-size="22" font-weight="700">Optional Gemini</text>
+    <text x="995" y="454" text-anchor="middle" fill="#dce6f1" font-size="16">session-only user key</text>
+    <text x="995" y="484" text-anchor="middle" fill="#9fb1c5" font-size="15">header auth · timeout · fallback</text>
+    <rect x="70" y="420" width="270" height="150" rx="22" fill="#152c2d" stroke="#59d4ad"/>
+    <text x="205" y="466" text-anchor="middle" fill="#7ce0c3" font-size="22" font-weight="700">Verification</text>
+    <text x="205" y="503" text-anchor="middle" fill="#dce6f1" font-size="16">CI · Playwright · safety scan</text>
+    <text x="205" y="533" text-anchor="middle" fill="#9fb1c5" font-size="15">CodeQL · dependency review</text>
+  </g>
+  <g fill="none" stroke-width="3">
+    <path d="M340 275 H420" stroke="#5bc6e8"/><path d="M780 240 H860" stroke="#a88cff"/><path d="M780 390 C820 390 820 450 860 450" stroke="#f0a65a"/><path d="M340 495 C390 495 380 410 450 390" stroke="#59d4ad"/>
+  </g>
+  <g fill="#f4d67e"><circle cx="420" cy="275" r="5"/><circle cx="780" cy="240" r="5"/><circle cx="780" cy="390" r="5"/><circle cx="450" cy="390" r="5"/></g>
+  <text x="600" y="626" text-anchor="middle" fill="#93a5ba" font-family="Inter,Arial,sans-serif" font-size="15">Interpretive wellness content is never an authorization, medical, scientific, or financial boundary.</text>
+</svg>
