@@ -4,6 +4,8 @@ Offline-first, multilingual wellness PWA built with browser-native APIs,
 Firebase account sync, deterministic safety checks, and real mobile browser
 verification.
 
+**Live demo:** [resonance-wellness-pwa.vercel.app](https://resonance-wellness-pwa.vercel.app)
+
 > Resonance is a reflection and listening tool—not medical treatment,
 > diagnosis, emergency support, financial advice, or a source of guaranteed
 > outcomes. Frequency, astrology, lunar, and historical-cycle associations are
@@ -20,6 +22,10 @@ verification.
 | Internationalization | English, Spanish, French, Arabic/RTL, Portuguese, and Chinese UI dictionaries |
 | Quality | Content assertions, security invariants, Playwright feature smoke tests, four-viewport stress checks |
 | Delivery | GitHub Actions, CodeQL, dependency review, Dependabot, Vercel/Netlify-compatible static hosting |
+
+See [Release Evidence](docs/RELEASE_EVIDENCE.md) for the exact privacy,
+dependency, browser, deployment, and repository-history gates used for the
+public showcase.
 
 ## Product walkthrough
 
